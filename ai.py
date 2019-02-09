@@ -27,10 +27,10 @@ class CNN(nn.Module):
     
     def __init__(self, number_actions):
         super(CNN, self).__init__()
-        self.convolution1 = nn.Conv2d(in_channels = 1, out_Channels = 32,  kernal_size = 5) 
-        self.convolution2 = nn.Conv2d(in_channels = 32, out_Channels = 32,  kernal_size = 3)
-        self.convolution3 = nn.Conv2d(in_channels = 32, out_Channels = 64,  kernal_size = 2)
-        self.fc1 = nn.Linear(in_features = self.count_neurons(1, 80, 80), out_features = 44)
+        self.convolution1 = nn.Conv2d(in_channels = 1, out_channels = 32,  kernel_size = 5) 
+        self.convolution2 = nn.Conv2d(in_channels = 32, out_channels = 32,  kernel_size = 3)
+        self.convolution3 = nn.Conv2d(in_channels = 32, out_channels = 64,  kernel_size = 2)
+        self.fc1 = nn.Linear(in_features = self.count_neurons((1, 80, 80)), out_features = 44)
         self.fc2 = nn.Linear(in_features = 44, out_features = number_actions)
     
     def count_neurons(self, image_dim):
@@ -107,8 +107,8 @@ def eligibility_trace(batch):
         input = Variable(torch.from_numpy(np.array([series[0].state, series[-1].state], dtype = np.float32)))
         output = cnn(input)
         cumul_reward = 0.0 if series[-1].done else output[1].data.max()
-        for step in reversed(series[:-1]): step.reward +
-            cumul_reward = gamma * cumul_reward
+        for step in reversed(series[:-1]): 
+            cumul_reward = step.reward + gamma * cumul_reward
         state = series[0].state
         target = output[0].data
         target[series[0].action] = cumul_reward
